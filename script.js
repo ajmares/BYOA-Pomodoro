@@ -43,6 +43,15 @@ class PomodoroTimer {
         // Update progress circle
         const progress = this.timeLeft / this.totalTime;
         this.setProgress(progress);
+
+        // Update document title with timer and mode
+        const activeMode = document.querySelector('.mode-switches button.active').id;
+        const modeTitles = {
+            'pomodoro': 'Pomodoro',
+            'shortBreak': 'Short Break',
+            'longBreak': 'Long Break'
+        };
+        document.title = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} - ${modeTitles[activeMode]}`;
     }
 
     start() {
