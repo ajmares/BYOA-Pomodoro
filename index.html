@@ -9,8 +9,13 @@
 <body>
     <div class="container">
         <h1>Pomodoro Timer</h1>
-        <div class="timer">
-            <span id="minutes">25</span>:<span id="seconds">00</span>
+        <div class="timer-container">
+            <svg class="progress-ring" width="300" height="300">
+                <circle class="progress-ring__circle" stroke="#3498db" stroke-width="12" stroke-linecap="round" fill="transparent" r="130" cx="150" cy="150"/>
+            </svg>
+            <div class="timer">
+                <span id="minutes">25</span>:<span id="seconds">00</span>
+            </div>
         </div>
         <div class="controls">
             <button id="start">Start</button>

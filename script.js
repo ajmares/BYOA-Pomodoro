@@ -8,10 +8,13 @@ class PomodoroTimer {
         this.pomodoroButton = document.getElementById('pomodoro');
         this.shortBreakButton = document.getElementById('shortBreak');
         this.longBreakButton = document.getElementById('longBreak');
+        this.progressCircle = document.querySelector('.progress-ring__circle');
 
         this.timeLeft = 25 * 60; // 25 minutes in seconds
         this.timerId = null;
         this.isRunning = false;
+        this.totalTime = 25 * 60; // Store the total time for progress calculation
+        this.lastUpdate = Date.now();
 
         this.pomodoroTime = 25 * 60;
         this.shortBreakTime = 5 * 60;
@@ -33,9 +36,13 @@ class PomodoroTimer {
 
     updateDisplay() {
         const minutes = Math.floor(this.timeLeft / 60);
-        const seconds = this.timeLeft % 60;
+        const seconds = Math.floor(this.timeLeft % 60);
         this.minutesDisplay.textContent = minutes.toString().padStart(2, '0');
         this.secondsDisplay.textContent = seconds.toString().padStart(2, '0');
+        
+        // Update progress circle
+        const progress = this.timeLeft / this.totalTime;
+        this.setProgress(progress);
     }
 
     start() {
@@ -43,8 +50,13 @@ class PomodoroTimer {
             this.isRunning = true;
             this.startButton.style.display = 'none';
             this.pauseButton.style.display = 'inline-block';
+            this.lastUpdate = Date.now();
             this.timerId = setInterval(() => {
-                this.timeLeft--;
+                const now = Date.now();
+                const deltaTime = (now - this.lastUpdate) / 1000; // Convert to seconds
+                this.lastUpdate = now;
+                
+                this.timeLeft = Math.max(0, this.timeLeft - deltaTime);
                 this.updateDisplay();
                 
                 if (this.timeLeft <= 0) {
@@ -53,7 +65,7 @@ class PomodoroTimer {
                     this.timeLeft = 0;
                     this.updateDisplay();
                 }
-            }, 1000);
+            }, 16); // Update approximately every 16ms (60fps)
         }
     }
 
@@ -70,9 +82,15 @@ class PomodoroTimer {
         this.updateDisplay();
     }
 
+    setProgress(progress) {
+        const circumference = 816.8; // 2 * π * r (r = 130)
+        this.progressCircle.style.strokeDashoffset = -circumference * (1 - progress);
+    }
+
     setTimer(time, mode) {
         this.pause();
         this.timeLeft = time;
+        this.totalTime = time; // Update total time for progress calculation
         this.updateDisplay();
         
         // Update active button
